@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, Enum, DateTime
+from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, Enum, DateTime, Table
 from sqlalchemy.orm import relationship
 from phongMachTu import db, app
 from flask_login import UserMixin
@@ -23,11 +23,14 @@ class NguoiDung(db.Model, UserMixin):
     danhSachDangKy = relationship("DanhSachDangKy", backref="nguoiDung", lazy=True)
     phieuKhamBenh = relationship("PhieuKhamBenh", backref="nguoiDung", lazy=True)
     hoaDon = relationship("HoaDon", backref="nguoiDung", lazy=True)
+    def __str__(self):
+        return self.ten
 
 class DanhSachKhamBenh(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     ngayKham = Column(DateTime, default=datetime.now())  # yyyy-mm-dd
     danhSachDangKy = relationship("DanhSachDangKy", backref="danhSachKhamBenh", lazy=True)
+
 
 class DanhSachDangKy(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -39,6 +42,10 @@ class DanhSachDangKy(db.Model):
     danhSachKhamBenh_id = Column(Integer, ForeignKey(DanhSachKhamBenh.id), nullable=False)
     nguoiDung_id = Column(Integer, ForeignKey(NguoiDung.id), nullable=False)
 
+    def __str__(self):
+        return self.ten
+
+
 class BenhNhan(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     ten = Column(String(100), nullable=True)
@@ -47,6 +54,9 @@ class BenhNhan(db.Model):
     diaChi = Column(String(100), nullable=True)
     sdt = Column(String(20), nullable=True)
     phieuKhamBenh = relationship("PhieuKhamBenh", backref="benhNhan", lazy=True)
+
+    def __str__(self):
+        return self.ten
 
 
 class PhieuKhamBenh(db.Model):
@@ -58,6 +68,11 @@ class PhieuKhamBenh(db.Model):
     nguoiDung_id = Column(Integer, ForeignKey(NguoiDung.id), nullable=False)
     benhNhan_id = Column(Integer, ForeignKey(BenhNhan.id), nullable=False)
     hoaDon = relationship("HoaDon", backref="phieuKhamBenh", lazy=True)
+    thuoc = relationship("Thuoc", secondary="ChiTietToaThuoc", back_populates="phieuKhamBenh" )
+
+    def __str__(self):
+        return self.ten
+
 
 class HoaDon(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -70,12 +85,59 @@ class HoaDon(db.Model):
     nguoiDung_id = Column(Integer, ForeignKey(NguoiDung.id), nullable=False)
     phieuKhamBenh_id = Column(Integer, ForeignKey(PhieuKhamBenh.id), nullable=False)
 
-# Chi tiet toa thuoc, thuoc, don vi, chi tiet loai thuoc, loai thuoc
+    def __str__(self):
+        return self.ten
+
+
+class DonViThuoc(db.Model):
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    donVi = Column(String(50), nullable=True)
+    thuoc = relationship("Thuoc", backref="donViThuoc", lazy=True)
+
+#Thuoc_PhieuKhamBenh
+ChiTietToaThuoc=db.Table(
+    'chi_tiet_toa_thuoc',
+    Column("id", Integer, nullable=False),
+    Column("cachDung",String(100), nullable=True),
+    Column("thuoc_id", Integer, ForeignKey("thuoc.id"), nullable=False),
+    Column("phieuKhamBenh_id",Integer, ForeignKey(PhieuKhamBenh.id), nullable=False)
+)
+
+#Thuoc_LoaiThuoc
+ChiTietLoaiThuoc=db.Table(
+    "chi_tiet_loai_thuoc",
+    Column("thuoc_id",Integer, ForeignKey("thuoc.id")),
+    Column("loaiThuoc_id",Integer, ForeignKey("loai_thuoc.id")),
+)
+
+class LoaiThuoc(db.Model):
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    ten = Column(String(100), nullable=True)
+    thuoc = relationship("Thuoc", secondary=ChiTietLoaiThuoc, back_populates="loaiThuoc" )
+
+    def __str__(self):
+        return self.ten
+
+
+class Thuoc(db.Model):
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    ten = Column(String(100), nullable=True)
+    donGia = Column(Float, nullable=True)
+    soLuong = Column(Integer, nullable=True)
+    ngaySX = Column(DateTime)  # yyyy-mm-dd
+    hanSD = Column(DateTime)  # yyyy-mm-dd
+    donVi_id = Column(Integer, ForeignKey(DonViThuoc.id), nullable=False)
+    loaiThuoc = relationship("LoaiThuoc", secondary=ChiTietLoaiThuoc, back_populates="thuoc" )
+    phieuKhamBenh = relationship("PhieuKhamBenh", secondary=ChiTietToaThuoc, back_populates="thuoc" )
+
+    def __str__(self):
+        return self.ten
 
 
 if __name__ == "__main__":
+
     with app.app_context():
-        db.create_all()
+         db.create_all()
 
         # import hashlib
         # u1 = User(name="Admin", username="admin", password=str(hashlib.md5("123456".encode("utf-8")).hexdigest()),

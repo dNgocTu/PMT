@@ -1,6 +1,6 @@
 from flask import render_template
 
-from phongMachTu import  app
+from phongMachTu import app
 
 
 @app.route("/")
