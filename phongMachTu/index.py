@@ -44,10 +44,11 @@ def lap_phieu_kham():
     for t in dao.get_thuoc():
         thuocs.append(t.ten)
     if request.method.__eq__('POST'):
-        dao.add_phieu_kham(hoTen=request.form.get('hoTen'), ngayKham=request.form.get('ngayKham')
-                           , trieuChung=request.form.get('trieuChung'), duDoanBenh=request.form.get('duDoan')
-                           , tenThuoc=request.form.get('tenThuoc'), soLuong=request.form.get('soLuong')
-                           , cachDung=request.form.get('cachDung'))
+        for i in range(request.form.getlist('cachDung').__len__()):
+            dao.add_phieu_kham(hoTen=request.form.get('hoTen'), ngayKham=request.form.get('ngayKham')
+                               , trieuChung=request.form.get('trieuChung'), duDoanBenh=request.form.get('duDoan')
+                               , tenThuoc=request.form.getlist('tenThuoc')[i], soLuong=request.form.getlist('soLuong')[i]
+                               , cachDung=request.form.getlist('cachDung')[i])
     return render_template("lap_phieu_kham.html", vaiTro = UserRoleEnum.DOCTOR, userRole = UserRoleEnum
                            ,thuocs = thuocs)
 

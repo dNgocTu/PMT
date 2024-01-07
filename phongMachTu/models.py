@@ -193,6 +193,4 @@ if __name__ == "__main__":
         # bn2 = BenhNhan(ten="Nguyen Van B", gioiTinh="Nu", namSinh="2002-05-22")
         # db.session.add_all([bn1, bn2])
         # db.session.commit()
-        # chiTietToaThuoc1 = ChiTietToaThuoc(cachDung="cachDung", soLuong="soLuong", thuoc_id=1)
-        # db.session.add_all(chiTietToaThuoc1)
-        # db.session.commit()
+
