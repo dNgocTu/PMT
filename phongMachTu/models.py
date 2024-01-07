@@ -67,7 +67,7 @@ class PhieuKhamBenh(db.Model):
     nguoiDung_id = Column(Integer, ForeignKey(NguoiDung.id), nullable=True)
     benhNhan_id = Column(Integer, ForeignKey(BenhNhan.id), nullable=True)
     hoaDon = relationship("HoaDon", backref="phieuKhamBenh", lazy=True)
-    thuoc = relationship("Thuoc", secondary="chi_tiet_toa_thuoc", back_populates="phieuKhamBenh", lazy=True  )
+    chiTietToaThuoc = relationship("ChiTietToaThuoc", backref="phieuKhamBenh", lazy=True  )
 
 
 class HoaDon(db.Model):
@@ -91,29 +91,49 @@ class DonViThuoc(db.Model):
 
 
 
-#Thuoc_PhieuKhamBenh
-ChiTietToaThuoc=db.Table(
-    'chi_tiet_toa_thuoc',
-    Column("id", Integer, primary_key=True, autoincrement=True, nullable=False),
-    Column("cachDung",String(100), nullable=True),
-    Column("soLuong",String(100), nullable=True),
-    Column("thuoc_id", Integer, ForeignKey("thuoc.id"), nullable=True),
-    Column("phieuKhamBenh_id",Integer, ForeignKey(PhieuKhamBenh.id), nullable=True),
-)
+# #Thuoc_PhieuKhamBenh
+# ChiTietToaThuoc=db.Table(
+#
+#     Column("id", Integer, primary_key=True, autoincrement=True, nullable=False),
+#     Column("cachDung",String(100), nullable=True),
+#     Column("soLuong",String(100), nullable=True),
+#     Column("thuoc_id", Integer, ForeignKey("thuoc.id"), nullable=True),
+#     Column("phieuKhamBenh_id",Integer, ForeignKey(PhieuKhamBenh.id), nullable=True),
+# )
 
+
+class ChiTietToaThuoc(db.Model):
+    __tablename__ = 'chi_tiet_toa_thuoc'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    cachDung = Column(String(100), nullable=True)
+    soLuong = Column(Integer, nullable=True)
+    thuoc_id = Column(Integer, ForeignKey('thuoc.id', ondelete='CASCADE'), nullable=False)
+    phieuKhamBenh_id = Column(Integer, ForeignKey(PhieuKhamBenh.id, ondelete='CASCADE'), nullable=False)
+
+
+
+
+# #Thuoc_LoaiThuoc
+# ChiTietLoaiThuoc=db.Table(
+#     "chi_tiet_loai_thuoc",
+#     Column("id", Integer, primary_key=True, autoincrement=True, nullable=False),
+#     Column("thuoc_id",Integer, ForeignKey("thuoc.id")),
+#     Column("loaiThuoc_id",Integer, ForeignKey("loai_thuoc.id")),
+# )
 
 #Thuoc_LoaiThuoc
-ChiTietLoaiThuoc=db.Table(
-    "chi_tiet_loai_thuoc",
-    Column("id", Integer, primary_key=True, autoincrement=True, nullable=False),
-    Column("thuoc_id",Integer, ForeignKey("thuoc.id")),
-    Column("loaiThuoc_id",Integer, ForeignKey("loai_thuoc.id")),
-)
+class ChiTietLoaiThuoc(db.Model):
+    __tablename__ = 'chi_tiet_loai_thuoc'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    thuoc_id = Column(Integer, ForeignKey('thuoc.id', ondelete='CASCADE'), nullable=False)
+    loaiThuoc_id = Column(Integer, ForeignKey("loai_thuoc.id", ondelete='CASCADE'), nullable=False)
+
+
 
 class LoaiThuoc(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     ten = Column(String(100), nullable=True)
-    thuoc = relationship("Thuoc", secondary=ChiTietLoaiThuoc, back_populates="loaiThuoc", lazy=True  )
+    chiTietLoaiThuoc = relationship("ChiTietLoaiThuoc", backref="loai_thuoc", lazy=True  )
 
 
 
@@ -125,8 +145,8 @@ class Thuoc(db.Model):
     ngaySX = Column(DateTime)  # yyyy-mm-dd
     hanSD = Column(DateTime)  # yyyy-mm-dd
     donVi_id = Column(Integer, ForeignKey(DonViThuoc.id), nullable=True)
-    loaiThuoc = relationship("LoaiThuoc", secondary=ChiTietLoaiThuoc, back_populates="thuoc", lazy=True )
-    phieuKhamBenh = relationship("PhieuKhamBenh", secondary=ChiTietToaThuoc, back_populates="thuoc", lazy=True )
+    chiTietLoaiThuoc = relationship("ChiTietLoaiThuoc", backref="thuoc", lazy=True )
+    chiTietToaThuoc = relationship("ChiTietToaThuoc", backref="thuoc", lazy=True )
 
     def __str__(self):
         return self.ten
