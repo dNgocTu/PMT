@@ -1,7 +1,76 @@
 {% extends "layout/base.html" %}
 
 {% block title %}Trang chủ{% endblock %}
-
-
 {% block content %}
+<!--Introduce start-->
+<div class="container-fluid bg-primary py-5 mb-5 hero-header">
+    <div class="container py-5">
+        <div class="row justify-content-start">
+            <div class="col-lg-8 text-center text-lg-start">
+                <h1 class="display-1 text-white mb-md-4">Giải pháp chăm sóc sức khỏe tốt nhất</h1>
+                <div class="pt-2">
+                    <a href="#search" class="btn btn-light rounded-pill py-md-3 px-md-5 mx-2">Tìm kiếm</a>
+                    <a href="" class="btn btn-outline-light rounded-pill py-md-3 px-md-5 mx-2">
+                        Đặt lịch khám</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Introduce end-->
+
+<!-- About Start -->
+<div class="container-fluid py-5">
+    <div class="container">
+        <div class="row gx-5">
+            <div class="col-lg-5 mb-5 mb-lg-0" style="min-height: 500px;">
+                <div class="position-relative h-100">
+                    <img class="position-absolute w-100 h-100 rounded"
+                         src="{{url_for('static', filename='img/about.jpg')}}" style="object-fit: cover;">
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="mb-4">
+                    <h5 class="d-inline-block text-primary text-uppercase border-bottom border-5">Giới thiệu</h5>
+                    <h1 class="display-4">Chăm sóc y tế tốt nhất cho bạn và gia đình</h1>
+                </div>
+                <p>Với dịch vụ khám, chữa bệnh chất lượng cao và tinh thần phục vụ chu đáo
+                    , Phòng Khám Đa khoa đã trở thành địa chỉ khám,
+                    chữa bệnh tin cậy cho hầu hết người dân TP.HCM và các khu vực lân cận.</p>
+                <div class="row g-3 pt-3">
+                    <div class="col-sm-3 col-6">
+                        <div class="bg-light text-center rounded-circle py-4">
+                            <i class="fa fa-3x fa-user-md text-primary mb-3"></i>
+                            <h6 class="mb-0">Bác sĩ<small class="d-block text-primary">đạt chuẩn</small></h6>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-6">
+                        <div class="bg-light text-center rounded-circle py-4">
+                            <i class="fa fa-3x fa-procedures text-primary mb-3"></i>
+                            <h6 class="mb-0">Dịch vụ<small class="d-block text-primary">khẩn cấp</small></h6>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-6">
+                        <div class="bg-light text-center rounded-circle py-4">
+                            <i class="fa fa-3x fa-microscope text-primary mb-3"></i>
+                            <h6 class="mb-0">Kiểm tra<small class="d-block text-primary">chính xác</small></h6>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 col-6">
+                        <div class="bg-light text-center rounded-circle py-4">
+                            <i class="fa fa-3x fa-ambulance text-primary mb-3"></i>
+                            <h6 class="mb-0">Xe cứu thương<small class="d-block text-primary">miễn phí</small></h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- About End -->
+
+
+
+
+
 {% endblock %}

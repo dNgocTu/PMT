@@ -1,0 +1,43 @@
+{% extends "layout/base.html" %}
+
+{% block title %}Đăng Nhập{% endblock %}
+
+
+{% block content %}
+<h1 class="text-center text-info mt-1">ĐĂNG NHẬP (Bệnh nhân không cần dùng tính năng này)</h1>
+
+    <form method="POST" class="container">
+      <div class="mb-3 mt-3">
+        <label for="uname" class="form-label">Tên đăng nhập:</label>
+    <input type="text" class="form-control" id="uname" placeholder="Tên đăng nhập" name="uname" required>
+      </div>
+      <div class="mb-3">
+        <label for="pwd" class="form-label">Mật khẩu:</label>
+    <input type="password" class="form-control" id="pwd" placeholder="Mật khẩu" name="pwd" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Đăng nhập</button>
+    </form>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages%}
+            {% if category=='error' %}
+            <!--Login failed-->
+            <div class="container alert alert-danger alert-dismissible fade show" role="alert">
+                {{ message}}
+                <button type="button" class="btn-close" data-bs-dismiss="alert">
+                </button>
+            </div>
+            {% else %}
+            <!--Login success-->
+            <div class="container alert alert-success alert-dismissible fade show" role="alert">
+                {{ message}}
+                <button type="button" class="btn-close" data-bs-dismiss="alert">
+                </button>
+            </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+{% endblock %}

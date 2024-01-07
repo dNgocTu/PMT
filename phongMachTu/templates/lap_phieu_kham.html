@@ -1,0 +1,70 @@
+{% extends "doctor.html" %}
+
+{% block title %}Đặt lịch khám{% endblock %}
+
+
+{% block content %}
+<h1 class="text-center">PHIẾU KHÁM BỆNH</h1>
+<form method="post" class="container border border-success rounded">
+    <div>
+        <div class="row">
+          <div class="col-sm-4">Họ tên</div>
+          <div class="col-sm-8 mt-1">
+              <input type="text" class="form-control" id="hoTen" placeholder="Họ tên" name="hoTen"></div>
+        </div>
+        <div class="row">
+          <div class="col-sm-4">Ngày khám</div>
+          <div class="col-sm-8 mt-1">
+              <input type="date" class="form-control" id="ngayKham" placeholder="Ngày khám" name="ngayKham"></div>
+        </div>
+        <div class="row">
+          <div class="col-sm-4">Triệu chứng</div>
+          <div class="col-sm-8 mt-1">
+              <input type="text" class="form-control" id="trieuChung" placeholder="Triệu chứng" name="trieuChung"></div>
+        </div>
+        <div class="row">
+          <div class="col-sm-4">Dự đoán bệnh</div>
+          <div class="col-sm-8 mt-1">
+              <input type="text" class="form-control" id="duDoan" placeholder="Dự đoán bệnh" name="duDoan"></div>
+        </div>
+    </div>
+    <div class="container mt-3">
+      <table class="table table-striped" >
+        <thead>
+          <tr>
+            <th>Thuốc</th>
+            <th>Số lượng</th>
+            <th>Cách dùng</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for thuoc in session['thuoc'].values() %}
+          <tr id="thuoc{{ thuoc.id }}" class="thuocs">
+            <td>
+                <select class="form-select" name="tenThuoc">
+                    <option>Chọn loại thuốc</option>
+                    {% for t in thuoc.ten %}
+                    <option> {{ t }} </option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td>
+                <input type="number" min="0" oninput="validity.valid||(value='');" class="form-control" placeholder="Số lượng" name="soLuong">
+            </td>
+            <td>
+                <input type="text" class="form-control" placeholder="Cách dùng" name="cachDung">
+            </td>
+            <td>
+                <button type="button" class="btn btn-danger" onclick="deleteThuoc({{thuoc.id}}, this)" >&times;</button>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="d-flex justify-content-around">
+        <button type="button" class="btn btn-success w-25 p-2 mb-2" onclick="addThuoc({{thuocs}})">Thêm</button>
+        <button type="submit" class="btn btn-success w-25 p-2 mb-2">Lưu</button>
+    </div>
+</form>
+{% endblock %}

@@ -1,30 +1,35 @@
-from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, Enum, DateTime, Table
+from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey, Enum, DateTime
 from sqlalchemy.orm import relationship
 from phongMachTu import db, app
 from flask_login import UserMixin
 from datetime import datetime
-import enum
+import enum, hashlib
+
 
 class UserRoleEnum(enum.Enum):
     ADMIN = 1
     DOCTOR = 2
     NURSE = 3
-    CASHIER = 4
+    STAFF = 4
+
+
+class QuyDinh(db.Model):
+    ma = Column(Integer, primary_key=True, autoincrement=True)
+    ten = Column(String(100), nullable=True)
+    giaTri = Column(String(50), nullable=True)
+
+
 
 class NguoiDung(db.Model, UserMixin):
     id = Column(Integer, primary_key=True, autoincrement=True)
     ten = Column(String(100), nullable=True)
-    ngaySinh = Column(DateTime, default="1890-01-01")  # yyyy-mm-dd
+    ngaySinh = Column(DateTime, default=datetime(1890, 1, 1, 18, 23))  # yyyy-mm-dd hh-mm
     taiKhoan = Column(String(50), nullable=False, unique=True)
-    matKhau = Column(String(50), nullable=False)
-    avatar = Column(String(100),
-                    default="https://res.cloudinary.com/dxxwcby8l/image/upload/v1688179242/hclq65mc6so7vdrbp7hz.jpg")
+    matKhau = Column(String(150), nullable=False)
     vaiTro = Column(Enum(UserRoleEnum))
     danhSachDangKy = relationship("DanhSachDangKy", backref="nguoiDung", lazy=True)
     phieuKhamBenh = relationship("PhieuKhamBenh", backref="nguoiDung", lazy=True)
     hoaDon = relationship("HoaDon", backref="nguoiDung", lazy=True)
-    def __str__(self):
-        return self.ten
 
 class DanhSachKhamBenh(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -36,27 +41,21 @@ class DanhSachDangKy(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     ten = Column(String(100), nullable=True)
     gioiTinh = Column(String(10), nullable=True)
-    namSinh = Column(DateTime, default="1890-01-01")
+    namSinh = Column(DateTime, default=datetime(1890, 1, 1, 18, 23))# yyyy-mm-dd hh-mm
     sdt = Column(String(20), nullable=True)
     ngayDangKy = Column(DateTime, default=datetime.now())
-    danhSachKhamBenh_id = Column(Integer, ForeignKey(DanhSachKhamBenh.id), nullable=False)
-    nguoiDung_id = Column(Integer, ForeignKey(NguoiDung.id), nullable=False)
-
-    def __str__(self):
-        return self.ten
+    danhSachKhamBenh_id = Column(Integer, ForeignKey(DanhSachKhamBenh.id), nullable=True)
+    nguoiDung_id = Column(Integer, ForeignKey(NguoiDung.id), nullable=True)
 
 
 class BenhNhan(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     ten = Column(String(100), nullable=True)
     gioiTinh = Column(String(10), nullable=True)
-    namSinh = Column(DateTime, default="1890-01-01")# yyyy-mm-dd
+    namSinh = Column(DateTime, default=datetime(1890, 1, 1, 18, 23))#  yyyy-mm-dd hh-mm
     diaChi = Column(String(100), nullable=True)
     sdt = Column(String(20), nullable=True)
     phieuKhamBenh = relationship("PhieuKhamBenh", backref="benhNhan", lazy=True)
-
-    def __str__(self):
-        return self.ten
 
 
 class PhieuKhamBenh(db.Model):
@@ -65,13 +64,10 @@ class PhieuKhamBenh(db.Model):
     ngayLap = Column(DateTime, default=datetime.now())# yyyy-mm-dd
     trieuChung = Column(String(100), nullable=True)
     duDoanBenh = Column(String(200), nullable=True)
-    nguoiDung_id = Column(Integer, ForeignKey(NguoiDung.id), nullable=False)
-    benhNhan_id = Column(Integer, ForeignKey(BenhNhan.id), nullable=False)
+    nguoiDung_id = Column(Integer, ForeignKey(NguoiDung.id), nullable=True)
+    benhNhan_id = Column(Integer, ForeignKey(BenhNhan.id), nullable=True)
     hoaDon = relationship("HoaDon", backref="phieuKhamBenh", lazy=True)
-    thuoc = relationship("Thuoc", secondary="ChiTietToaThuoc", back_populates="phieuKhamBenh" )
-
-    def __str__(self):
-        return self.ten
+    thuoc = relationship("Thuoc", secondary="chi_tiet_toa_thuoc", back_populates="phieuKhamBenh", lazy=True  )
 
 
 class HoaDon(db.Model):
@@ -82,30 +78,34 @@ class HoaDon(db.Model):
     tienKham = Column(Float, nullable=True)
     baoHiem = Column(String(50), nullable=True)
     trangThai = Column(Boolean, default=False)
-    nguoiDung_id = Column(Integer, ForeignKey(NguoiDung.id), nullable=False)
-    phieuKhamBenh_id = Column(Integer, ForeignKey(PhieuKhamBenh.id), nullable=False)
-
-    def __str__(self):
-        return self.ten
+    nguoiDung_id = Column(Integer, ForeignKey(NguoiDung.id), nullable=True)
+    phieuKhamBenh_id = Column(Integer, ForeignKey(PhieuKhamBenh.id), nullable=True)
 
 
 class DonViThuoc(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     donVi = Column(String(50), nullable=True)
-    thuoc = relationship("Thuoc", backref="donViThuoc", lazy=True)
+    thuoc = relationship("Thuoc", backref="don_vi_thuoc", lazy=True)
+    def __str__(self):
+        return self.donVi
+
+
 
 #Thuoc_PhieuKhamBenh
 ChiTietToaThuoc=db.Table(
     'chi_tiet_toa_thuoc',
-    Column("id", Integer, nullable=False),
+    Column("id", Integer, primary_key=True, autoincrement=True, nullable=False),
     Column("cachDung",String(100), nullable=True),
-    Column("thuoc_id", Integer, ForeignKey("thuoc.id"), nullable=False),
-    Column("phieuKhamBenh_id",Integer, ForeignKey(PhieuKhamBenh.id), nullable=False)
+    Column("soLuong",String(100), nullable=True),
+    Column("thuoc_id", Integer, ForeignKey("thuoc.id"), nullable=True),
+    Column("phieuKhamBenh_id",Integer, ForeignKey(PhieuKhamBenh.id), nullable=True),
 )
+
 
 #Thuoc_LoaiThuoc
 ChiTietLoaiThuoc=db.Table(
     "chi_tiet_loai_thuoc",
+    Column("id", Integer, primary_key=True, autoincrement=True, nullable=False),
     Column("thuoc_id",Integer, ForeignKey("thuoc.id")),
     Column("loaiThuoc_id",Integer, ForeignKey("loai_thuoc.id")),
 )
@@ -113,10 +113,8 @@ ChiTietLoaiThuoc=db.Table(
 class LoaiThuoc(db.Model):
     id = Column(Integer, primary_key=True, autoincrement=True)
     ten = Column(String(100), nullable=True)
-    thuoc = relationship("Thuoc", secondary=ChiTietLoaiThuoc, back_populates="loaiThuoc" )
+    thuoc = relationship("Thuoc", secondary=ChiTietLoaiThuoc, back_populates="loaiThuoc", lazy=True  )
 
-    def __str__(self):
-        return self.ten
 
 
 class Thuoc(db.Model):
@@ -126,35 +124,55 @@ class Thuoc(db.Model):
     soLuong = Column(Integer, nullable=True)
     ngaySX = Column(DateTime)  # yyyy-mm-dd
     hanSD = Column(DateTime)  # yyyy-mm-dd
-    donVi_id = Column(Integer, ForeignKey(DonViThuoc.id), nullable=False)
-    loaiThuoc = relationship("LoaiThuoc", secondary=ChiTietLoaiThuoc, back_populates="thuoc" )
-    phieuKhamBenh = relationship("PhieuKhamBenh", secondary=ChiTietToaThuoc, back_populates="thuoc" )
+    donVi_id = Column(Integer, ForeignKey(DonViThuoc.id), nullable=True)
+    loaiThuoc = relationship("LoaiThuoc", secondary=ChiTietLoaiThuoc, back_populates="thuoc", lazy=True )
+    phieuKhamBenh = relationship("PhieuKhamBenh", secondary=ChiTietToaThuoc, back_populates="thuoc", lazy=True )
 
     def __str__(self):
         return self.ten
 
 
+
+
 if __name__ == "__main__":
 
-    with app.app_context():
-         db.create_all()
+     with app.app_context():
 
-        # import hashlib
-        # u1 = User(name="Admin", username="admin", password=str(hashlib.md5("123456".encode("utf-8")).hexdigest()),
-        #         user_role=UserRoleEnum.ADMIN)
-        # db.session.add(u1)
+        db.create_all()
+
+        # adm1 = NguoiDung(ten="Admin 1", ngaySinh="2003-05-21",
+        #                  taiKhoan="adm1", matKhau=str(hashlib.md5("adm1".encode("utf-8")).hexdigest()),
+        #                  vaiTro=UserRoleEnum.ADMIN)
+        # bs1 = NguoiDung(ten="Bac Si 1", ngaySinh="2003-01-01",
+        #                 taiKhoan="bs1", matKhau=str(hashlib.md5("bs1".encode("utf-8")).hexdigest())
+        #                 , vaiTro=UserRoleEnum.DOCTOR)
+        # bs2 = NguoiDung(ten="Bac Si 2", ngaySinh="2003-12-01",
+        #                 taiKhoan="bs2", matKhau=str(hashlib.md5("bs2".encode("utf-8")).hexdigest())
+        #                 , vaiTro=UserRoleEnum.DOCTOR)
+        # yt1 = NguoiDung(ten="Y ta 1", ngaySinh="2003-12-11",
+        #                 taiKhoan="yt1", matKhau=str(hashlib.md5("yt1".encode("utf-8")).hexdigest())
+        #                 , vaiTro=UserRoleEnum.NURSE)
+        # yt2 = NguoiDung(ten="Y ta 2", ngaySinh="2004-12-01",
+        #                 taiKhoan="yt2", matKhau=str(hashlib.md5("yt2".encode("utf-8")).hexdigest())
+        #                 , vaiTro=UserRoleEnum.NURSE)
+        # tn1 = NguoiDung(ten="Thu ngan 1", ngaySinh="2003-05-01",
+        #                 taiKhoan="tn1", matKhau=str(hashlib.md5("tn1".encode("utf-8")).hexdigest())
+        #                 , vaiTro=UserRoleEnum.STAFF)
+        # tn2 = NguoiDung(ten="Thu ngan 2", ngaySinh="2003-01-31",
+        #                 taiKhoan="tn2", matKhau=str(hashlib.md5("tn2".encode("utf-8")).hexdigest())
+        #                 , vaiTro=UserRoleEnum.STAFF)
+        # qd1 = QuyDinh(ten="Số lượng bệnh nhân một ngày", giaTri=int(40))
+        # qd2 = QuyDinh(ten="Số tiền khám", giaTri=float(100000))
+        # db.session.add_all([qd1, qd2])
         # db.session.commit()
-        # c1 = Category(name="Mobile")
-        # c2 = Category(name="Tablet")
-        # c3 = Category(name="Desktop")
-        # db.session.add(c1)
-        # db.session.add(c2)
-        # db.session.add(c3)
+        # db.session.add_all([adm1, bs1, bs2, yt1, yt2, tn1, tn2])
         # db.session.commit()
-        # p1 = Product(name='iPhone 13', price=21000000, category_id=1)
-        # p2 = Product(name='iPad Pro 2023', price=21000000, category_id=2)
-        # p3 = Product(name='Galaxy Tab S9', price=24000000, category_id=2)
-        # p4 = Product(name='Galaxy S23', price=29000000, category_id=1)
-        # p5 = Product(name='iPhone 15 Pro Max', price=25000000, category_id=1)
-        # db.session.add_all([p1, p2, p3, p4, p5])
+        #
+        #
+        # bn1 = BenhNhan(ten="Nguyen Van A", gioiTinh="Nam",namSinh="2003-11-21")
+        # bn2 = BenhNhan(ten="Nguyen Van B", gioiTinh="Nu", namSinh="2002-05-22")
+        # db.session.add_all([bn1, bn2])
+        # db.session.commit()
+        # chiTietToaThuoc1 = ChiTietToaThuoc(cachDung="cachDung", soLuong="soLuong", thuoc_id=1)
+        # db.session.add_all(chiTietToaThuoc1)
         # db.session.commit()

@@ -1,0 +1,20 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+
+{% if current_user.is_authenticated %}
+<h1 class="text-center">Chào mừng đến với trang quản trị</h1>
+{% else %}
+<form method="post" action="/admin/login">
+  <div class="mb-3 mt-3">
+    <label for="admname" class="form-label">Tên đăng nhập: </label>
+    <input type="username" class="form-control" id="admname" placeholder="Tên đăng nhập" name="admname">
+  </div>
+  <div class="mb-3">
+    <label for="admpwd" class="form-label">Mật khẩu: </label>
+    <input type="password" class="form-control" id="admpwd" placeholder="Mật khẩu" name="admpwd">
+  </div>
+  <button type="submit" class="btn btn-primary">Đăng nhập</button>
+</form>
+{% endif %}
+{% endblock %}
