@@ -1,0 +1,63 @@
+{% extends "doctor.html" %}
+
+{% block title %}Tra cứu thuốc{% endblock %}
+
+
+{% block content %}
+<h1 class="text-center">TRA CỨU THUỐC</h1>
+<div class="container-fluid py-5">
+    <div class="container">
+        <div class="mx-auto">
+            <form action="">
+                <div class="row g-3 align-items-center justify-content-center">
+                    <div class="col-auto">
+                        <label class="col-form-label">Tên thuốc:</label>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <input type="text" autocomplete="on" name="kw" class="form-control bg-light border-0"
+                               placeholder="Nhập tên thuốc"
+                               style="height: 55px;">
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary" style="width:120px; height: 55px;">Tìm kiếm
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="mt-5 ">
+            <table class="table table-striped " >
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                        <p>Ten thuoc</p>
+                    </td>
+                    <td>
+                        <p>Don gia</p>
+                    </td>
+                    <td>
+                        <p>Don vi tinh</p>
+                    </td>
+                    <td>
+                        <a class="btn btn-primary ">Xem Thông Tin</a>
+                    </td>
+                  </tr>
+                </tbody>
+            </table>
+            <p class="text-danger">Không có sản phẩm nào!</p>
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+
+{% endblock %}
