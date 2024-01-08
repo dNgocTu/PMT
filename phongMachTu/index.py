@@ -40,7 +40,7 @@ def sign_out():
 @app.route("/lap-phieu-kham", methods = ['post', 'get'])
 def lap_phieu_kham():
     thuocs = []
-
+    session['thuoc'] ={}
     for t in dao.get_thuoc():
         thuocs.append(t.ten)
     if request.method.__eq__('POST'):
@@ -93,6 +93,10 @@ def doctor():
     # session.pop('thuoc', default=None)
     return render_template("doctor.html", vaiTro = UserRoleEnum.DOCTOR, userRole = UserRoleEnum)
 
+
+@app.route("/tra-cuu-thuoc")
+def tra_cuu_thuoc():
+    return render_template("tra_cuu_thuoc.html",vaiTro = UserRoleEnum.DOCTOR, userRole = UserRoleEnum)
 
 
 @login.user_loader

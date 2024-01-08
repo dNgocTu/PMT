@@ -91,16 +91,6 @@ class DonViThuoc(db.Model):
 
 
 
-# #Thuoc_PhieuKhamBenh
-# ChiTietToaThuoc=db.Table(
-#
-#     Column("id", Integer, primary_key=True, autoincrement=True, nullable=False),
-#     Column("cachDung",String(100), nullable=True),
-#     Column("soLuong",String(100), nullable=True),
-#     Column("thuoc_id", Integer, ForeignKey("thuoc.id"), nullable=True),
-#     Column("phieuKhamBenh_id",Integer, ForeignKey(PhieuKhamBenh.id), nullable=True),
-# )
-
 
 class ChiTietToaThuoc(db.Model):
     __tablename__ = 'chi_tiet_toa_thuoc'
@@ -111,15 +101,6 @@ class ChiTietToaThuoc(db.Model):
     phieuKhamBenh_id = Column(Integer, ForeignKey(PhieuKhamBenh.id, ondelete='CASCADE'), nullable=False)
 
 
-
-
-# #Thuoc_LoaiThuoc
-# ChiTietLoaiThuoc=db.Table(
-#     "chi_tiet_loai_thuoc",
-#     Column("id", Integer, primary_key=True, autoincrement=True, nullable=False),
-#     Column("thuoc_id",Integer, ForeignKey("thuoc.id")),
-#     Column("loaiThuoc_id",Integer, ForeignKey("loai_thuoc.id")),
-# )
 
 #Thuoc_LoaiThuoc
 class ChiTietLoaiThuoc(db.Model):
@@ -144,6 +125,9 @@ class Thuoc(db.Model):
     soLuong = Column(Integer, nullable=True)
     ngaySX = Column(DateTime)  # yyyy-mm-dd
     hanSD = Column(DateTime)  # yyyy-mm-dd
+    image =  Column(String(100),
+                    default="https://res.cloudinary.com/dxxwcby8l/image/upload/v1688179242/hclq65mc6so7vdrbp7hz.jpg")
+    comments = relationship('Comment', backref='thuoc', lazy=True)
     donVi_id = Column(Integer, ForeignKey(DonViThuoc.id), nullable=True)
     chiTietLoaiThuoc = relationship("ChiTietLoaiThuoc", backref="thuoc", lazy=True )
     chiTietToaThuoc = relationship("ChiTietToaThuoc", backref="thuoc", lazy=True )
@@ -152,7 +136,11 @@ class Thuoc(db.Model):
         return self.ten
 
 
-
+class Comment(db.Model):
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    content = Column(String(255), nullable=False)
+    created_date = Column(DateTime, default=datetime.now())
+    thuoc_id = Column(Integer, ForeignKey(Thuoc.id), nullable=True)
 
 if __name__ == "__main__":
 
@@ -193,4 +181,14 @@ if __name__ == "__main__":
         # bn2 = BenhNhan(ten="Nguyen Van B", gioiTinh="Nu", namSinh="2002-05-22")
         # db.session.add_all([bn1, bn2])
         # db.session.commit()
-
+        #
+        # dv1=DonViThuoc(donVi = "Chai")
+        # dv2=DonViThuoc(donVi = "Sỉ")
+        # dv3=DonViThuoc(donVi = "Viên")
+        # db.session.add_all([dv1, dv2, dv3])
+        # db.session.commit()
+        #
+        # t1 = Thuoc(ten="Thuoc 1", donGia=100000, soLuong=25, ngaySX="1999-01-01",  hanSD="2020-01-01", donVi_id = 1)
+        # t2 = Thuoc(ten="Thuoc 2", donGia=500000, soLuong=25, ngaySX="1989-01-01",  hanSD="2023-01-01", donVi_id = 2)
+        # db.session.add_all([t1, t2])
+        # db.session.commit()
