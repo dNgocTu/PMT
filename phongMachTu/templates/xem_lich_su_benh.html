@@ -1,21 +1,21 @@
 {% extends "doctor.html" %}
 
-{% block title %}Tra cứu thuốc{% endblock %}
+{% block title %}Xem lịch sử bệnh{% endblock %}
 
 
 {% block content %}
-<h1 class="text-center">TRA CỨU THUỐC</h1>
+<h1 class="text-center">XEM LỊCH SỬ BỆNH</h1>
 <div class="container-fluid py-5">
     <div class="container">
         <div class="mx-auto">
-            <form action="/tra-cuu-thuoc" method="get">
+            <form action="/xem-lich-su-benh" method="get">
                 <div class="row g-3 align-items-center justify-content-center">
                     <div class="col-auto">
-                        <label class="col-form-label">Tên thuốc:</label>
+                        <label class="col-form-label">Tên bệnh nhân:</label>
                     </div>
                     <div class="col-12 col-sm-4">
                         <input type="text" autocomplete="on" name="kw" class="form-control bg-light border-0"
-                               placeholder="Nhập tên thuốc"
+                               placeholder="Nhập tên bệnh nhân"
                                style="height: 55px;">
                     </div>
                     <div class="col-auto">
@@ -29,47 +29,38 @@
             <table class="table table-striped " >
                 <thead>
                   <tr>
-                    <th>Tên</th>
-                    <th>Đơn giá</th>
-                    <th>Số lượng</th>
-                    <th>Ngày sản xuất</th>
-                    <th>Hạn sử dụng</th>
-                    <th>Đơn vị tính</th>
+                    <th>Tên bệnh nhân</th>
+                    <th>Năm sinh</th>
+                    <th>Giới tính</th>
+                    <th>Ngày khám</th>
+                    <th>Thuốc đã kê</th>
                   </tr>
                 </thead>
                 <tbody>
-                {% if thuoc %}
-                    {% for t in thuoc %}
+                {% if benhNhan %}
+                    {% for bn in benhNhan %}
                       <tr>
                         <td>
-                            {{ t.ten }}
+                            {{ bn.tenBenhNhan}}
                         </td>
                         <td>
-                           {{ "{:,.0f} VNĐ".format(t.donGia)|replace(',', '.') }}
+                            {{ bn.namSinh.strftime('%d-%m-%Y')}}
                         </td>
                           <td>
-                           {{ t.soLuong }}
+                            {{ bn.gioiTinh}}
                         </td>
                           <td>
-                           {{ t.ngaySX.strftime('%d-%m-%Y') }}
+                            {{ bn.ngayKham.strftime('%d-%m-%Y')}}
                         </td>
-                          <td>
-                           {{ t.hanSD.strftime('%d-%m-%Y') }}
                         <td>
-                            {% for dvt in donViThuoc %}
-                                {% if dvt.id == t.donVi_id %}
-                                    {{ dvt.donVi }}
-                                {% endif %}
-                            {% endfor %}
+                            {{ bn.tenThuoc}}
                         </td>
                       </tr>
-                     {% endfor %}
+                    {% endfor %}
                 {% endif %}
                 </tbody>
             </table>
         </div>
     </div>
 </div>
-
-
 {% endblock %}

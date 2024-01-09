@@ -8,10 +8,17 @@ import hashlib
 def get_thuoc():
     return Thuoc.query.all()
 
+
+def search_thuoc_by_name(thuoc_ten):
+    thuocs = get_Thuoc_by_ten(thuoc_ten)
+    if thuoc_ten:
+        thuocs = Thuoc.query.filter(Thuoc.ten.contains(thuoc_ten)).all()
+    return thuocs
+
+
+
 def get_donViThuoc():
     return DonViThuoc.query.all()
-
-
 
 
 def get_nguoiDung_by_id(user_id):
@@ -31,14 +38,17 @@ def get_Thuoc_by_ten(thuoc_ten):
     return Thuoc.query.filter(Thuoc.ten.__eq__(thuoc_ten)).first()
 
 
-def get_tenDonViThuoc_by_id(donVi_id):
-    return DonViThuoc.query.get(donVi_id).donVi
-
-
-def get_phieuKhamBenh_by_date(phieuKham_date):
-    phieuKham_date = datetime.strptime(phieuKham_date, "%Y-%m-%d")
-    return PhieuKhamBenh.query.filter(PhieuKhamBenh.ngayLap.__eq__(phieuKham_date)).first()
-
+def get_benhNhan_thuoc_by_tenBenhNhan(ten_benh_nhan):
+    return db.session.query(BenhNhan.ten.label("tenBenhNhan")
+                            , BenhNhan.namSinh.label("namSinh")
+                            , BenhNhan.gioiTinh.label("gioiTinh")
+                            , PhieuKhamBenh.ngayLap.label("ngayKham")
+                            , Thuoc.ten.label("tenThuoc"))\
+            .join(PhieuKhamBenh, PhieuKhamBenh.benhNhan_id.__eq__(BenhNhan.id))\
+            .join(ChiTietToaThuoc, ChiTietToaThuoc.phieuKhamBenh_id.__eq__(PhieuKhamBenh.id))\
+            .join(Thuoc, ChiTietToaThuoc.thuoc_id.__eq__(Thuoc.id))\
+            .filter(BenhNhan.ten.__eq__(ten_benh_nhan))\
+            .all()
 
 
 def auth_user(username, password):
@@ -48,17 +58,18 @@ def auth_user(username, password):
 
 
 
-def add_phieu_kham(hoTen, ngayKham, trieuChung, duDoanBenh, tenThuoc, soLuong, cachDung):
-    phieu = get_phieuKhamBenh_by_date(ngayKham)
-    phieuKham1 = phieu
-    if get_benhNhan_by_ten(hoTen):
-        if phieu == None or phieu.benhNhan_id != get_benhNhan_by_ten(hoTen).id:
-            phieuKham1 = PhieuKhamBenh(ten="PhieuKham" + ngayKham, ngayLap=ngayKham
-                                       , trieuChung=trieuChung, duDoanBenh=duDoanBenh
-                                       ,benhNhan_id=get_benhNhan_by_ten(hoTen).id)
-            db.session.add(phieuKham1)
-            db.session.commit()
-        chiTietToaThuoc = ChiTietToaThuoc(cachDung=cachDung, soLuong=soLuong
-                                           , thuoc_id=get_Thuoc_by_ten(tenThuoc).id, phieuKhamBenh_id=phieuKham1.id)
-        db.session.add(chiTietToaThuoc)
-        db.session.commit()
+def add_phieu_kham(hoTen, ngayKham, trieuChung, duDoanBenh, nguoiDung_id, tenThuoc, soLuong, cachDung):
+    phieuKham1 = PhieuKhamBenh(ten="PhieuKham" + ngayKham, ngayLap=ngayKham
+                               , trieuChung=trieuChung, duDoanBenh=duDoanBenh
+                               , nguoiDung_id=nguoiDung_id, benhNhan_id=get_benhNhan_by_ten(hoTen).id)
+    db.session.add(phieuKham1)
+    db.session.commit()
+    chiTietToaThuoc = ChiTietToaThuoc(cachDung=cachDung, soLuong=soLuong
+                                       , thuoc_id=get_Thuoc_by_ten(tenThuoc).id, phieuKhamBenh_id=phieuKham1.id)
+    db.session.add(chiTietToaThuoc)
+    db.session.commit()
+
+
+if __name__ == "__main__":
+    with app.app_context():
+        print(get_benhNhan_thuoc_by_tenBenhNhan("Nguyen Van B"))

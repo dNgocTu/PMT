@@ -1,11 +1,9 @@
-var i = localStorage.getItem('i') || 1;
 
 function addThuoc(ten) {
     fetch("/api/lap-phieu-kham", {
         method: "post",
         body :JSON.stringify({
-            "id": i,
-            "ten": ten,
+            "ten": ten
         }),
         headers:{
         'Content-Type' : 'application/json'
@@ -13,11 +11,9 @@ function addThuoc(ten) {
     }).then(function(res){
         return res.json()
     }).then(function(data){
-        console.info(data)
-        i++;
-        localStorage.setItem('i', i);
         location.reload();
     })
+
 }
 
 function deleteThuoc(id, obj){
