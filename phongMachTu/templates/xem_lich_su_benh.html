@@ -8,7 +8,7 @@
 <div class="container-fluid py-5">
     <div class="container">
         <div class="mx-auto">
-            <form action="/xem-lich-su-benh" method="get">
+            <form action="/doctor/xem-lich-su-benh" method="get">
                 <div class="row g-3 align-items-center justify-content-center">
                     <div class="col-auto">
                         <label class="col-form-label">Tên bệnh nhân:</label>
@@ -32,28 +32,32 @@
                     <th>Tên bệnh nhân</th>
                     <th>Năm sinh</th>
                     <th>Giới tính</th>
+                    <th>SĐT</th>
                     <th>Ngày khám</th>
-                    <th>Thuốc đã kê</th>
+                    <th>Dự đoán bệnh</th>
                   </tr>
                 </thead>
                 <tbody>
-                {% if benhNhan %}
-                    {% for bn in benhNhan %}
+                {% if lichSuBenh %}
+                    {% for lsb in lichSuBenh %}
                       <tr>
                         <td>
-                            {{ bn.tenBenhNhan}}
+                            {{ lsb.tenBenhNhan}}
                         </td>
                         <td>
-                            {{ bn.namSinh.strftime('%d-%m-%Y')}}
+                            {{ lsb.namSinh.strftime('%d-%m-%Y')}}
                         </td>
                           <td>
-                            {{ bn.gioiTinh}}
+                            {{ lsb.gioiTinh}}
                         </td>
                           <td>
-                            {{ bn.ngayKham.strftime('%d-%m-%Y')}}
+                            {{ lsb.sdt }}
+                        </td>
+                          <td>
+                            {{ lsb.ngayKham.strftime('%d-%m-%Y')}}
                         </td>
                         <td>
-                            {{ bn.tenThuoc}}
+                            {{ lsb.duDoanBenh}}
                         </td>
                       </tr>
                     {% endfor %}

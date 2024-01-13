@@ -44,9 +44,8 @@
           <tr id="thuoc{{ thuoc.id }}" class="thuocs">
             <td>
                 <select class="form-select" name="tenThuoc">
-                    <option>Chọn loại thuốc</option>
                     {% for t in thuoc.ten %}
-                    <option> {{ t }} </option>
+                    <option selected> {{ t }} </option>
                     {% endfor %}
                 </select>
             </td>

@@ -1,0 +1,74 @@
+{% extends "layout/base.html" %}
+
+{% block title %}Thu ngân{% endblock %}
+
+
+{% block content %}
+<h1 class="text-center">Danh sách hóa đơn</h1>
+<div class="container-fluid py-5">
+    <div class="container">
+        <div class="mx-auto">
+            <form action="/staff/hoa-don-da-thanh-toan" method="get">
+                <div class="row g-3 align-items-center justify-content-center">
+                    <div class="col-auto">
+                        <label class="col-form-label">Tên bệnh nhân:</label>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <input type="text" autocomplete="on" name="kw" class="form-control bg-light border-0"
+                               placeholder="Nhập tên bệnh nhân"
+                               style="height: 55px;">
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary" style="width:120px; height: 55px;">Tìm kiếm
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="mt-5 ">
+            <table class="table table-striped ">
+                <thead>
+                <tr>
+                    <th>Mã hóa đơn</th>
+                    <th>Tên</th>
+                    <th>Ngày lập</th>
+                    <th>Tiền thuốc</th>
+                    <th>Tiền khám</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for hd in hoaDons %}
+                <tr>
+                    <td>
+                        {{ hd.id }}
+                    </td>
+                    <td>
+                        {{ hd.ten }}
+                    </td>
+                    <td>
+                        {{ hd.ngayKham.strftime('%d-%m-%Y') }}
+                    </td>
+                    <td>
+                        {{ "{:,.0f} VNĐ".format(hd.tienThuoc)|replace(',', '.') }}
+                    </td>
+                    <td>
+                        {{ "{:,.0f} VNĐ".format(hd.tienKham)|replace(',', '.') }}
+                    <td>
+                    <div class="h-25 bg-warning text-center">
+                      Đã thanh toán
+                    </div>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <ul class="pagination mt-2 container">
+        {% for i in range(pages) %}
+            <li class="page-item"><a class="page-link" href="/staff/hoa-don-da-thanh-toan?page={{ i + 1 }}">{{ i + 1 }}</a></li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

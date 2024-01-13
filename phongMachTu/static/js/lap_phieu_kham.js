@@ -1,6 +1,6 @@
 
 function addThuoc(ten) {
-    fetch("/api/lap-phieu-kham", {
+    fetch("/api/doctor/lap-phieu-kham", {
         method: "post",
         body :JSON.stringify({
             "ten": ten
@@ -19,7 +19,7 @@ function addThuoc(ten) {
 function deleteThuoc(id, obj){
     if (confirm("Bạn chắc chắn xóa?") === true){
         obj.disable = true;
-        fetch(`/api/lap-phieu-kham/${id}`, {
+        fetch(`/api/doctor/lap-phieu-kham/${id}`, {
             method: "delete",
         }).then(function(res){//Thuc thi theo kieu bat dong bo, res la du lieu tra ve tu ham addToCart
             return res.json()
