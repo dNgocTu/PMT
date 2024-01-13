@@ -9,15 +9,29 @@
             <a class="navbar-brand" href="/doctor">Phòng Mạch Tư</a>
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/lap-phieu-kham">Lập phiếu khám</a>
+                        <a class="nav-link" href="/doctor/lap-phieu-kham">Lập phiếu khám</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/tra-cuu-thuoc">Tra cứu thuốc</a>
+                        <a class="nav-link" href="/doctor/tra-cuu-thuoc">Tra cứu thuốc</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="">Xem lịch sử bệnh</a>
+                        <a class="nav-link" href="/doctor/xem-lich-su-benh">Xem lịch sử bệnh</a>
                     </li>
                 </ul>
+            {% elif current_user.is_authenticated and vaiTro == userRole.STAFF %}
+            <a class="navbar-brand" href="/staff">Phòng Mạch Tư</a>
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                        <a class="nav-link" href="/staff/hoa-don-da-thanh-toan">Hóa đơn đã thanh toán</a>
+                    </li>
+            </ul>
+            {% elif current_user.is_authenticated and vaiTro == userRole.NURSE %}
+            <a class="navbar-brand" href="/nurse">Phòng Mạch Tư</a>
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item" >
+                   <a class="nav-link" href="/nurse/tao-lich-kham">Tạo ngày khám</a>
+                </li>
+            </ul>
             {% else %}
                 <!--Chưa đăng nhập tài khoản-->
             <a class="navbar-brand" href="/">Phòng Mạch Tư</a>

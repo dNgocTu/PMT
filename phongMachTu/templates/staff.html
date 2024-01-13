@@ -1,0 +1,97 @@
+{% extends "layout/base.html" %}
+
+{% block title %}Thu ngân{% endblock %}
+
+
+{% block content %}
+<h1 class="text-center">Danh sách hóa đơn</h1>
+<div class="container-fluid py-5">
+    <div class="container">
+        <div class="mx-auto">
+            <form action="/staff" method="get">
+                <div class="row g-3 align-items-center justify-content-center">
+                    <div class="col-auto">
+                        <label class="col-form-label">Tên bệnh nhân:</label>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <input id="kw" type="text" autocomplete="on" name="kw" class="form-control bg-light border-0"
+                               placeholder="Nhập tên bệnh nhân"
+                               style="height: 55px;">
+                    </div>
+                    <div class="col-auto">
+                        <button onclick="resetValue()" type="submit" class="btn btn-primary" style="width:120px; height: 55px;">Tìm kiếm
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="mt-5 ">
+            <table class="table table-striped ">
+                <thead>
+                <tr>
+                    <th>Mã hóa đơn</th>
+                    <th>Tên</th>
+                    <th>Ngày lập</th>
+                    <th>Tiền thuốc</th>
+                    <th>Tiền khám</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for hd in hoaDons %}
+                <tr>
+                    <td>
+                        {{ hd.id }}
+                    </td>
+                    <td>
+                        {{ hd.ten }}
+                    </td>
+                    <td>
+                        {{ hd.ngayKham.strftime('%d-%m-%Y') }}
+                    </td>
+                    <td>
+                        {{ "{:,.0f} VNĐ".format(hd.tienThuoc)|replace(',', '.') }}
+                    </td>
+                    <td>
+                        {{ "{:,.0f} VNĐ".format(hd.tienKham)|replace(',', '.') }}
+                    <td>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal{{hd.id}}">
+                      Thanh toán
+                    </button>
+                        <!-- The Modal -->
+                    <div class="modal" id="myModal{{hd.id}}">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <!-- Modal Header -->
+                          <div class="modal-header">
+                            <h4 class="modal-title">Xác nhận thanh toán</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                          </div>
+                          <!-- Modal body -->
+                          <div class="modal-body">
+                            Thanh toán phiếu {{hd.id}} {{ hd.ten }}
+                          </div>
+                          <!-- Modal footer -->
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Hủy</button>
+                            <button onclick="pay({{ hd.id }})" type="submit" class="btn btn-success" data-bs-dismiss="modal">Đồng ý</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <ul class="pagination mt-2 container">
+    {% if kw == "" or kw == None %}
+        {% for i in range(pages) %}
+            <li class="page-item"><a class="page-link" href="/staff?page={{ i + 1 }}">{{ i + 1 }}</a></li>
+        {% endfor %}
+    {% endif %}
+    </ul>
+</div>
+{% endblock %}
