@@ -147,7 +147,7 @@ if __name__ == "__main__":
      with app.app_context():
 
         db.create_all()
-
+        #
         # adm1 = NguoiDung(ten="Admin 1", ngaySinh="2003-05-21",
         #                  taiKhoan="adm1", matKhau=str(hashlib.md5("adm1".encode("utf-8")).hexdigest()),
         #                  vaiTro=UserRoleEnum.ADMIN)
